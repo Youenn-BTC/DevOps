@@ -1,15 +1,12 @@
-FROM python:3.12
+FROM python:3.9-slim
 
 RUN apt-get update && apt-get install -y apache2-utils
 
 WORKDIR /app
 
-ADD . /app
+COPY . /app
 
-RUN chmod +x generate-votes.sh
+RUN chmod +x generate-votes.sh && \
+    python make-data.py
 
-RUN python make-data.py
-
-## Multistage pour ce container apres qu'il ai genere la data??
-
-CMD ["/bin/bash", "-c", "./generate-votes.sh"]
+CMD ["sh", "/app/generate-votes.sh"]

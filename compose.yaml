@@ -3,6 +3,9 @@ services:
     build: ./worker/
     networks:
       - back-net
+    depends_on:
+      - db
+      - redis
   db:
     image: postgres:latest
     networks:
@@ -19,6 +22,58 @@ services:
       - back-net
     ports:
       - "6379:6379"
+  vote1:
+    build: ./vote/
+    networks:
+      - front-net
+      - back-net
+    ports:
+      - "5001:5000"
+    depends_on:
+      - redis
+  vote2:
+    build: ./vote/
+    networks:
+      - front-net
+      - back-net
+    ports:
+      - "5002:5000"
+    depends_on:
+      - redis
+  vote3:
+    build: ./vote/
+    networks:
+      - front-net
+      - back-net
+    ports:
+      - "5003:5000"
+    depends_on:
+      - redis
+  result:
+    build: ./result/
+    networks:
+      - front-net
+      - back-net
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+  nginx:
+    build: ./nginx/
+    networks:
+      - front-net
+    ports:
+      - "8000:8000"
+    depends_on:
+      - vote1
+      - vote2
+      - vote3
+  seed:
+    build: ./seed-data/
+    networks:
+      - front-net
+    depends_on:
+      - nginx
 
 networks:
   front-net:
