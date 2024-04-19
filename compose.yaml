@@ -1,0 +1,29 @@
+services:
+  worker:
+    build: ./worker/
+    networks:
+      - back-net
+  db:
+    image: postgres:latest
+    networks:
+      - back-net
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+  redis:
+    image: redis:latest
+    networks:
+      - back-net
+    ports:
+      - "6379:6379"
+
+networks:
+  front-net:
+  back-net:
+
+volumes:
+  db-data:
+  cache-data:
