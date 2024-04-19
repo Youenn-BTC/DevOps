@@ -12,7 +12,7 @@ services:
       - back-net
     volumes:
       - db-data:/var/lib/postgresql/data
-      - C:\Users\samue\Documents\Git\GitHub\devops\DevOps\healthchecks\:/healthchecks/
+      - ./healthchecks/:/healthchecks/
     healthcheck:
       test: ["CMD", "/healthchecks/postgres.sh"]
       interval: 3s
@@ -30,7 +30,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - C:\Users\samue\Documents\Git\GitHub\devops\DevOps\healthchecks\:/healthchecks/
+      - ./healthchecks/:/healthchecks/
     healthcheck:
       test: ["CMD", "/healthchecks/redis.sh"]
       interval: 3s
