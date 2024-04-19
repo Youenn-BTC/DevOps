@@ -1,4 +1,4 @@
-FROM nginx:latest
+FROM nginx
 
 # SUpprimer le fichier de configuration par défaut
 RUN rm /etc/nginx/conf.d/default.conf
