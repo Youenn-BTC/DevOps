@@ -4,8 +4,10 @@ services:
     networks:
       - back-net
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   db:
     image: postgres:latest
     networks:
@@ -45,7 +47,8 @@ services:
     ports:
       - "5001:5000"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
   vote2:
     build: ./vote/
     networks:
@@ -54,16 +57,8 @@ services:
     ports:
       - "5002:5000"
     depends_on:
-      - redis
-  vote3:
-    build: ./vote/
-    networks:
-      - front-net
-      - back-net
-    ports:
-      - "5004:5000"
-    depends_on:
-      - redis
+      redis:
+        condition: service_healthy
   result:
     build: ./result/
     networks:
@@ -72,7 +67,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   nginx:
     build: ./nginx/
     networks:
@@ -82,7 +78,6 @@ services:
     depends_on:
       - vote1
       - vote2
-      - vote3
   seed:
     build: ./seed-data/
     networks:
