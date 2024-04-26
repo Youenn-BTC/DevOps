@@ -16,3 +16,14 @@ spec:
       containers:
         - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/result
           name: result-container
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3

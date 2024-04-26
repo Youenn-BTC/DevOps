@@ -16,3 +16,14 @@ spec:
       containers:
         - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/vote
           name: vote-container
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
