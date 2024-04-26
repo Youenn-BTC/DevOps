@@ -5,13 +5,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: redis-deployement
+      app: redis-pod
   replicas: 1
   template:
     metadata:
-      name: redis-deployement
+      name: redis-pod-template
       labels:
-        app: redis-deployement
+        app: redis-pod
     spec:
       containers:
         - image: redis:alpine

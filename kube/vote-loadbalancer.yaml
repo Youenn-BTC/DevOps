@@ -8,4 +8,4 @@ spec:
     - port: 8000
       targetPort: 5000
   selector:
-    app: vote-deployement
+    app: vote-pods

@@ -5,13 +5,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: vote-deployement
+      app: vote-pods
   replicas: 3
   template:
     metadata:
-      name: vote-deployement
+      name: vote-pods-template
       labels:
-        app: vote-deployement
+        app: vote-pods
     spec:
       containers:
         - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/vote

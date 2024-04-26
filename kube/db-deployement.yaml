@@ -5,18 +5,18 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: db-pods
+      app: db-pod
   replicas: 1
   template:
     metadata:
-      name: db-pods
+      name: db-pod-template
       labels:
-        app: db-pods
+        app: db-pod
     spec:
       volumes:
         - name: db-persistent-storage
           persistentVolumeClaim:
-            claimName: db-data
+            claimName: db-data-pvc
       containers:
         - name: db-container
           image: postgres:latest

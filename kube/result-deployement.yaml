@@ -5,13 +5,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: result-deployement
+      app: result-pod
   replicas: 1
   template:
     metadata:
-      name: result-deployement
+      name: result-pod-template
       labels:
-        app: result-deployement
+        app: result-pod
     spec:
       containers:
         - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/result

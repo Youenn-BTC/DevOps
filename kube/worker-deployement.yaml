@@ -5,13 +5,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: worker
+      app: worker-pod
   replicas: 1
   template:
     metadata:
-      name: worker
+      name: worker-pod-template
       labels:
-        app: worker
+        app: worker-pod
     spec:
       containers:
         - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/worker
