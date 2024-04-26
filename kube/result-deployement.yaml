@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-deployement
+spec:
+  selector:
+    matchLabels:
+      app: result-deployement
+  replicas: 1
+  template:
+    metadata:
+      name: result-deployement
+      labels:
+        app: result-deployement
+    spec:
+      containers:
+        - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/result
+          name: result-container

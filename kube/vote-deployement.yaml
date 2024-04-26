@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-deployement
+spec:
+  selector:
+    matchLabels:
+      app: vote-deployement
+  replicas: 3
+  template:
+    metadata:
+      name: vote-deployement
+      labels:
+        app: vote-deployement
+    spec:
+      containers:
+        - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/vote
+          name: vote-container

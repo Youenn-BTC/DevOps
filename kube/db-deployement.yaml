@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployement
+spec:
+  selector:
+    matchLabels:
+      app: db-pods
+  replicas: 1
+  template:
+    metadata:
+      name: db-pods
+      labels:
+        app: db-pods
+    spec:
+      volumes:
+        - name: db-persistent-storage
+          persistentVolumeClaim:
+            claimName: db-data
+      containers:
+        - name: db-container
+          image: postgres:latest
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "postgres"
+            - name: POSTGRES_USER
+              value: "postgres"
+          volumeMounts:
+            - name: db-persistent-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: data
+          ports:
+            - containerPort: 5432
+              protocol: TCP

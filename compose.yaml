@@ -66,7 +66,9 @@ services:
       redis:
         condition: service_healthy
   result:
-    build: ./result/
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/result
+    build:
+      context: ./result
     networks:
       - front-net
       - back-net
