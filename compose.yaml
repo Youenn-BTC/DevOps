@@ -1,6 +1,8 @@
 services:
   worker:
-    build: ./worker/
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/worker
+    build:
+      context: ./worker
     networks:
       - back-net
     depends_on:
@@ -40,7 +42,9 @@ services:
       start_period: 10s
       retries: 3
   vote1:
-    build: ./vote/
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/vote
+    build:
+      context: ./vote
     networks:
       - front-net
       - back-net
@@ -50,7 +54,9 @@ services:
       redis:
         condition: service_healthy
   vote2:
-    build: ./vote/
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/vote
+    build:
+      context: ./vote
     networks:
       - front-net
       - back-net
@@ -70,7 +76,9 @@ services:
       db:
         condition: service_healthy
   nginx:
-    build: ./nginx/
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/nginx
+    build:
+      context: ./nginx
     networks:
       - front-net
     ports:
@@ -79,7 +87,9 @@ services:
       - vote1
       - vote2
   seed:
-    build: ./seed-data/
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/seed
+    build:
+      context: ./seed-data
     networks:
       - front-net
     depends_on:
