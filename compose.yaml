@@ -11,7 +11,9 @@ services:
       redis:
         condition: service_healthy
   db:
-    image: postgres:latest
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/postgres
+    build:
+      context: ./postgres
     networks:
       - back-net
     volumes:
@@ -28,7 +30,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
   redis:
-    image: redis:alpine
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/redis
+    build:
+      context: ./redis
     networks:
       - back-net
     ports:

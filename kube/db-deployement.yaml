@@ -19,7 +19,7 @@ spec:
             claimName: db-data-pvc
       containers:
         - name: db-container
-          image: postgres:latest
+          image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/postgres
           env:
             - name: POSTGRES_PASSWORD
               value: "postgres"
@@ -34,3 +34,12 @@ spec:
           ports:
             - containerPort: 5432
               protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - /healthchecks/postgres.sh
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3

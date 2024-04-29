@@ -14,5 +14,16 @@ spec:
         app: redis-pod
     spec:
       containers:
-        - image: redis:alpine
+        - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/redis
           name: redis-container
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            exec:
+              command:
+                - /healthchecks/redis.sh
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
