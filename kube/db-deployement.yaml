@@ -20,13 +20,9 @@ spec:
       containers:
         - name: db-container
           image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/postgres
-          env:
-            - name: POSTGRES_PASSWORD
-              value: "postgres"
-            - name: POSTGRES_DB
-              value: "postgres"
-            - name: POSTGRES_USER
-              value: "postgres"
+          envFrom:
+            - configMapRef:
+                name: db-configmap
           volumeMounts:
             - name: db-persistent-storage
               mountPath: /var/lib/postgresql/data

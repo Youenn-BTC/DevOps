@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-deployement
+spec:
+  selector:
+    matchLabels:
+      app: vote-pods
+  replicas: 3
+  template:
+    metadata:
+      name: vote-pods-template
+      labels:
+        app: vote-pods
+    spec:
+      containers:
+        - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/vote
+          name: vote-container
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3

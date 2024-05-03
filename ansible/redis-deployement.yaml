@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployement
+spec:
+  selector:
+    matchLabels:
+      app: redis-pod
+  replicas: 1
+  template:
+    metadata:
+      name: redis-pod-template
+      labels:
+        app: redis-pod
+    spec:
+      containers:
+        - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/redis
+          name: redis-container
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            exec:
+              command:
+                - /healthchecks/redis.sh
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
