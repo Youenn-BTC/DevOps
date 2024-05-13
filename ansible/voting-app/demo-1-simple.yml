@@ -1,0 +1,12 @@
+- name: Install time synchronisation client
+  hosts: all
+  tasks:
+  - name: Make sure timesyncd is installed
+    ansible.builtin.apt:
+      name: systemd-timesyncd
+      state: present
+  - name: Make sure timesyncd is started on boot
+    ansible.builtin.systemd:
+      name: systemd-timesyncd.service
+      state: started
+      enabled: true

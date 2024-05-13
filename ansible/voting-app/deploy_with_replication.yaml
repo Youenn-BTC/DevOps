@@ -1,0 +1,34 @@
+- name: Installation de postgres avec réplication
+  hosts: all
+  vars:
+    pg_user: postgres
+    pg_password: postgres
+    replicator_password: replicator
+  become: yes
+  roles:
+    - role: conf_system
+      hosts:
+        - db1
+        - db2
+
+    - role: pg_install
+      hosts:
+        - db1
+        - db2
+
+    - role: pg_replication
+      hosts: db1
+      vars:
+        postgresql_mode: "primary"
+        postgresql_standby_ip: "..."
+
+    - role: pg_replication
+      hosts: db2
+      vars:
+        postgresql_mode: "standby"
+        postgresql_primary_ip: "..."
+
+    - role: conf_logicielle
+      hosts:
+        - db1
+        - db2

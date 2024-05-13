@@ -1,0 +1,11 @@
+- name: Setup memory configuration
+  hosts: all
+  vars:
+    low_memory_limit: 1024
+  tasks:
+  - name: Setup overcommit parameter for low memory
+    ansible.posix.sysctl:
+      name: vm.overcommit_memory
+      value: "1"
+      sysctl_file: /etc/sysctl.d/80-overcommit_memory.conf
+    when: "ansible_facts['memtotal_mb'] < low_memory_limit"

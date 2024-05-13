@@ -1,0 +1,31 @@
+- name: Create a replication user
+  become_user: postgres
+  become: yes
+  postgresql_user:
+    db: postgres
+    name: replicator
+    password: "{{ replicator_password }}"
+    role_attr_flags: replication
+    state: present
+
+- name: Get the HBA file path
+  become_user: postgres
+  become: yes
+  command: psql -c "SHOW hba_file" -t
+  register: hba_file
+
+- name: Display the variable
+  debug:
+    var: hba_file
+
+- name: Grant connection rights to the replication user
+  become_user: postgres
+  become: yes
+  postgresql_pg_hba:
+    dest: "{{ hba_file.stdout | trim }}"
+    contype: host
+    address: all
+    database: replication
+    user: replicator
+    method: md5
+    state: present
