@@ -1,0 +1,17 @@
+- name: Calculate shared_buffers value based on available memory (high memory)
+  set_fact:
+    shared_buffers_value: "{{ (ansible_memtotal_mb | int * 25 / 100 | int) }}MB"
+  when: ansible_memtotal_mb | int > 1024
+
+- name: Calculate shared_buffers value based on available memory (low memory)
+  set_fact:
+    shared_buffers_value: "{{ (ansible_memtotal_mb | int * 15 / 100 | int) }}MB"
+  when: ansible_memtotal_mb | int <= 1024
+
+- name: Set shared_buffers parameter
+  become_user: postgres
+  become: yes
+  postgresql_set:
+    name: shared_buffers
+    value: "{{ shared_buffers_value }}"
+  notify: Restart PostgreSQL

@@ -1,0 +1,111 @@
+services:
+  worker:
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/worker
+    build:
+      context: ./worker
+    networks:
+      - back-net
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  db:
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/postgres
+    build:
+      context: ./postgres
+    networks:
+      - back-net
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./healthchecks/:/healthchecks/
+    healthcheck:
+      test: ["CMD", "/healthchecks/postgres.sh"]
+      interval: 3s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+  redis:
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/redis
+    build:
+      context: ./redis
+    networks:
+      - back-net
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./healthchecks/:/healthchecks/
+    healthcheck:
+      test: ["CMD", "/healthchecks/redis.sh"]
+      interval: 3s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+  vote1:
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/vote
+    build:
+      context: ./vote
+    networks:
+      - front-net
+      - back-net
+    ports:
+      - "5001:5000"
+    depends_on:
+      redis:
+        condition: service_healthy
+  vote2:
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/vote
+    build:
+      context: ./vote
+    networks:
+      - front-net
+      - back-net
+    ports:
+      - "5002:5000"
+    depends_on:
+      redis:
+        condition: service_healthy
+  result:
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/result
+    build:
+      context: ./result
+    networks:
+      - front-net
+      - back-net
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+  nginx:
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/nginx
+    build:
+      context: ./nginx
+    networks:
+      - front-net
+    ports:
+      - "8000:8000"
+    depends_on:
+      - vote1
+      - vote2
+  seed:
+    image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/seed
+    build:
+      context: ./seed-data
+    networks:
+      - front-net
+    depends_on:
+      - nginx
+
+networks:
+  front-net:
+  back-net:
+
+volumes:
+  db-data:
+  cache-data:
+  healthchecks:

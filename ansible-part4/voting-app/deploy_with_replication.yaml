@@ -1,0 +1,37 @@
+- name: Installation de postgres avec réplication
+  hosts: all
+  vars:
+    pg_user: postgres
+    pg_password: postgres
+  become: yes
+  roles:
+    - conf_system
+
+    - pg_install
+
+- name: Gestion de la base primaire
+  hosts: db1
+  become: yes
+  roles:
+    - role: pg_replication
+      vars:
+        replicator_password: replicator
+        postgresql_mode: "primary"
+        postgresql_standby_ip: "{{ hostvars['db2']['ansible_host'] }}"
+
+- name: Gestion de la base secondaire
+  hosts: db2
+  become: yes
+  roles:
+    - role: pg_replication
+      vars:
+        pg_user: postgres
+        replicator_password: replicator
+        postgresql_mode: "standby"
+        postgresql_primary_ip: "{{ hostvars['db1']['ansible_host'] }}"
+
+- name: Configuration logicielle
+  hosts: all
+  become: yes
+  roles:
+    - conf_logicielle

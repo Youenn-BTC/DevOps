@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-deployement
+spec:
+  selector:
+    matchLabels:
+      app: result-pod
+  replicas: 1
+  template:
+    metadata:
+      name: result-pod-template
+      labels:
+        app: result-pod
+    spec:
+      containers:
+        - image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/result
+          name: result-container
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3

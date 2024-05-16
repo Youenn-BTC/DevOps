@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: seed-pod
+          image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/seed
+          command: ["sh", "/app/generate-votes.sh"]
+      restartPolicy: Never

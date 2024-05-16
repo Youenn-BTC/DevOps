@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployement
+spec:
+  selector:
+    matchLabels:
+      app: db-pod
+  replicas: 1
+  template:
+    metadata:
+      name: db-pod-template
+      labels:
+        app: db-pod
+    spec:
+      volumes:
+        - name: db-persistent-storage
+          persistentVolumeClaim:
+            claimName: db-data-pvc
+      containers:
+        - name: db-container
+          image: europe-west9-docker.pkg.dev/tuto-kube1/docker-images/postgres
+          envFrom:
+            - configMapRef:
+                name: db-configmap
+          volumeMounts:
+            - name: db-persistent-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: data
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - /healthchecks/postgres.sh
+            initialDelaySeconds: 10
+            periodSeconds: 3
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3

@@ -1,0 +1,10 @@
+- name: Installation de postgres
+  hosts: all
+  vars:
+    pg_user: postgres
+    pg_password: postgres
+  become: yes
+  roles:
+    - conf_system
+    - pg_install
+    - conf_logicielle

@@ -1,0 +1,20 @@
+- name: Dump des données de postgres
+  hosts: all
+  vars:
+    pg_user: postgres
+    pg_password: postgres
+  become: yes
+  tasks:
+    - name: Dump de la base de données postgres
+      become_user: postgres
+      become: yes
+      command: pg_dump -U {{ pg_user }} -d postgres
+      register: dump
+    - name: Enregistrer le dump dans un fichier
+      copy:
+        content: "{{ dump.stdout }}"
+        dest: /tmp/dump.sql
+    - name: Copier le dump sur la machine locale
+      fetch:
+        src: /tmp/dump.sql
+        dest: /tmp/dump.sql

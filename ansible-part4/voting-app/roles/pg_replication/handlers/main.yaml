@@ -1,0 +1,6 @@
+- name: Redémarrer le service postgresql
+  service:
+    name: postgresql@15-main
+    state: restarted
+
+
