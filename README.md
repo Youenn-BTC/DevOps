@@ -1,3 +1,4 @@
+### Authors : BERTIN Samuel, BRETECHE Youenn
 # Deployment Instructions
 
 ## Table of Contents
@@ -124,7 +125,10 @@ Add a firewall rule on GCP to allow incoming connections on port 5432, with our 
 
 ### Ansible <a name="ansible"></a>
 
-Move to `/ansible/voting-app/inventories/gcp.yaml` and modify the IP address from `postgres` with your VM public address.
+Move to `/ansible/voting-app/inventories/gcp.yaml`
+- Modify the `ansible_host` from `postgres` with your PrimaryVM public IP adress
+- Modify the `ansible_user` as the user name as the one running the script
+- Modify the `ansible_ssh_private_key_file` with the path to your private key file
 
 From the `/ansible/voting-app` folder, launch the deployment playbook:
 
@@ -188,7 +192,11 @@ Add a firewall rule on GCP to allow incoming connections on port 5432, with our 
 
 ### Ansible <a name="ansible-1"></a>
 
-Move to `/ansible-part4/voting-app/inventories/gcp.yaml` and modify the IP address from `db1` with your PrimaryVM public address and `db2` from your StandbyVM public address.
+Move to `/ansible-part4/voting-app/inventories/gcp.yaml`
+- Modify the `ansible_host` from `db1` with your PrimaryVM public IP adress
+- Modify the `ansible_host` from `db2` with your StandbyVM public IP adress
+- Modify the `ansible_user` as the user name as the one running the script
+- Modify the `ansible_ssh_private_key_file` with the path to your private key file
 
 From the `/ansible-part4/voting-app` folder, launch the deployment playbook:
 
