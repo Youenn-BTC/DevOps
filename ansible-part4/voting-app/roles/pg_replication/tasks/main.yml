@@ -24,10 +24,6 @@
   command: psql -c "SHOW hba_file" -t
   register: hba_file
 
-- name: Afficher la variable
-  debug:
-    var: hba_file
-
 - name: Accorder le droit de connexion à l’utilisateur replicator via le module postgresql_pg_hba.
   become_user: postgres
   become: yes
@@ -58,15 +54,34 @@
     name: "{{ item.name }}"
     value: "{{ item.value }}"
   loop:
-    - name: listen_addresses
-      value: "0.0.0.0"
     - name: wal_level
       value: replica
     - name: max_wal_senders
       value: "10"
+  when: postgresql_mode == "primary"
+
+- name: Configurer le fichier postgresql.conf
+  become_user: postgres
+  become: yes
+  postgresql_set:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  loop:
+    - name: listen_addresses
+      value: "0.0.0.0"
     - name: hot_standby
       value: on
   when: postgresql_mode == "standby"
+
+- name: Set wal_keep_size in postgresql.conf
+  become_user: postgres
+  become: yes
+  lineinfile:
+    path: /etc/postgresql/15/main/postgresql.conf
+    backrefs: yes
+    regexp: '^wal_keep_size\s*=\s*.*'
+    line: "wal_keep_size = 1024"
+  when: postgresql_mode == "primary"
   notify: Redémarrer le service postgresql
 
 - name: Create .pgpass file
@@ -105,13 +120,6 @@
     state: absent
   when: postgresql_mode == "standby"
 
-- name: Supprimer le contenu du répertoire de données PostgreSQL
-  become: yes
-  file:
-    path: "{{ data_directory.stdout_lines[2] | trim }}/.*"
-    state: absent
-  when: postgresql_mode == "standby"
-
 - name: Créer un répertoire vide au même chemin avec comme utilisateur et groupe postgres et droits 0700.
   become: yes
   file:
@@ -128,6 +136,12 @@
   environment:
     PGPASSFILE: "/tmp/.pgpass"
   command: pg_basebackup -h "{{ postgresql_primary_ip }}" -U replicator -p 5432 -D "{{ data_directory.stdout_lines[2] | trim }}" -X stream
+  when: postgresql_mode == "standby"
+  register: pg_basebackup
+
+- name: Afficher la sortie de la commande pg_basebackup
+  debug:
+    var: pg_basebackup
   when: postgresql_mode == "standby"
 
 - name: Supprimer le fichier /tmp/.pgpass pour ne pas le laisser trainer

@@ -1,9 +1,0 @@
-- name: Download Go
-  hosts: all
-  vars:
-    go_version: "1.19.3"
-  tasks:
-  - name: Download Go version {{go_version}}
-    ansible.builtin.get_url:
-      url: https://go.dev/dl/go{{go_version}}.linux-amd64.tar.gz
-      dest: /tmp/go{{go_version}}.linux-amd64.tar.gz

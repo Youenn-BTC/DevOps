@@ -9,4 +9,4 @@ ports:
   - port: 5432
 endpoints:
   - addresses:
-      - "34.163.38.68"
+      - "34.163.179.216"

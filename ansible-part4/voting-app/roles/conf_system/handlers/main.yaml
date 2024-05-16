@@ -1,0 +1,4 @@
+- name: Assert vm.vfs_cache_pressure value
+  assert:
+    that:
+      - vfs_cache_pressure.stdout|trim == 'vm.vfs_cache_pressure = 90'

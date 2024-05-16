@@ -1,0 +1,63 @@
+- name: Installation des prérequis
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - postgresql
+    - python3-psycopg2
+
+- name: Demarrer le service Postgres
+  service:
+    name: postgresql@15-main
+    state: started
+    enabled: yes
+
+- name: Créer une base de données nommée postgres
+  become_user: postgres
+  become: yes
+  postgresql_db:
+    name: postgres
+    state: present
+
+- name: Créer un utilisateur nommé postgres
+  become_user: postgres
+  become: yes
+  postgresql_user:
+    db: postgres
+    name: "{{ pg_user }}"
+    password: "{{ pg_password }}"
+    state: present
+
+- name: Accorder les droits à l’utilisateur postgres
+  become_user: postgres
+  become: yes
+  postgresql_privs:
+    db: postgres
+    privs: all
+    type: database
+    roles: postgres
+    state: present
+
+- name: Effectuer la requête SHOW hba_file et enregistrez la valeur de retour
+  become_user: postgres
+  become: yes
+  command: psql -c "SHOW hba_file" -t
+  register: hba_file
+
+- name: Accorder le droit de connexion à l’utilisateur postgres via le module postgresql_pg_hba.
+  become_user: postgres
+  become: yes
+  postgresql_pg_hba:
+    dest: "{{ hba_file.stdout | trim }}"
+    contype: host
+    address: all
+    method: md5
+    state: present
+  notify: Redémarrer le service postgresql
+
+- name: Définir l’adresse d’écoute du server sur toutes les interfaces.
+  become_user: postgres
+  become: yes
+  postgresql_set:
+    name: listen_addresses
+    value: "0.0.0.0"
