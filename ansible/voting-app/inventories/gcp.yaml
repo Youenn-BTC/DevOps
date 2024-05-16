@@ -6,7 +6,7 @@ all:
       ansible_port: 22
       ansible_ssh_private_key_file: "/home/sabertin/.ssh/google_compute_engine"
     db2:
-      ansible_host: 34.163.152.20
+      ansible_host: 34.163.187.200
       ansible_user: sabertin
       ansible_port: 22
       ansible_ssh_private_key_file: "/home/sabertin/.ssh/google_compute_engine"

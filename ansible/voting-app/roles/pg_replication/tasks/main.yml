@@ -105,6 +105,13 @@
     state: absent
   when: postgresql_mode == "standby"
 
+- name: Supprimer le contenu du répertoire de données PostgreSQL
+  become: yes
+  file:
+    path: "{{ data_directory.stdout_lines[2] | trim }}/.*"
+    state: absent
+  when: postgresql_mode == "standby"
+
 - name: Créer un répertoire vide au même chemin avec comme utilisateur et groupe postgres et droits 0700.
   become: yes
   file:
